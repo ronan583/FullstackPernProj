@@ -1,0 +1,30 @@
+{
+  "name": "pernrl-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/index.js",
+    "start2": "ts-node src/index.ts",
+    "watch": "tsc -w",
+    "dev": "nodemon dist/index.js",
+    "dev2": "nodemon --exec ts-node src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mikro-orm/cli": "^5.7.12",
+    "@mikro-orm/core": "^5.7.12",
+    "@mikro-orm/migrations": "^5.7.12",
+    "@mikro-orm/postgresql": "^5.7.12",
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "14.0.27",
+    "nodemon": "^2.0.22",
+    "ts-node": "8.10.2",
+    "typescript": "^5.1.3"
+  }
+}
