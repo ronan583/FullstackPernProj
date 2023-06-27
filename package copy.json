@@ -27,12 +27,5 @@
     "reflect-metadata": "^0.1.13",
     "ts-node": "8.10.2",
     "typescript": "^3.9.7"
-  },
-  "mikro-orm": {
-    "userTsNode": true,
-    "configPaths": [
-      "./src/mikro-orm.config.ts",
-      "./dist/mikro-orm.config.js"
-    ]
   }
 }
