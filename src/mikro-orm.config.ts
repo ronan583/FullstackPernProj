@@ -1,7 +1,7 @@
 import path from "path";
 import { __prod__ } from "./constants";
 import { Post } from "./entities/Post";
-import { MikroORM, Options } from "@mikro-orm/core";
+import { MikroORM } from "@mikro-orm/core";
 
 
 // const mikroConfig: Options = {
