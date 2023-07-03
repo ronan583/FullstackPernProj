@@ -2,6 +2,7 @@ import path from "path";
 import { __prod__ } from "./constants";
 import { Post } from "./entities/Post";
 import { MikroORM } from "@mikro-orm/core";
+import { User } from "./entities/User";
 
 
 // const mikroConfig: Options = {
@@ -18,7 +19,7 @@ const mikroConfig = {
     path: path.join(__dirname, "./migrations"),
     pattern: /^[\w-]+\d+\.ts$/,
   },
-  entities: [Post],
+  entities: [Post, User],
   dbName: "pernrl",
   type: "postgresql",
   user: "postgres",
