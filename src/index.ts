@@ -8,6 +8,18 @@ import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
+import connectRedis from "connect-redis";
+import session from "express-session";
+import Redis from "ioredis";
+import { MyContext } from "./types";
+import cors from "cors";
+
+// add property, augment express-session module
+declare module "express-session" {
+  interface SessionData {
+    userId: number;
+  }
+}
 
 const main = async () => {
   const orm = await MikroORM.init(mikroConfig);
@@ -22,6 +34,53 @@ const main = async () => {
   // console.log(posts);
 
   const app = express();
+  // Initialize client.
+  // let redisClient = redis.createClient();
+  app.use(
+    cors({
+      origin: [
+        "https://studio.apollographql.com",
+        "http://localhost:4000/graphql",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+      ],
+      // origin: '*',
+      // origin: 'http://localhost:4000/graphql',
+      credentials: true,
+    })
+  );
+  // const redisclient = Redis.createClient();
+  const redisclient = new Redis();
+  // redisClient.connect().catch(console.error);
+
+  const RedisStore = connectRedis(session);
+  // const RedisStore = connectRedis.default;
+
+  // Initialize store.
+  let redisStore = new RedisStore({
+    client: redisclient as any,
+    disableTouch: true,
+    disableTTL: true,
+  });
+  // Initialize sesssion storage.
+  app.use(
+    session({
+      name: "qid",
+      store: redisStore,
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 365 * 5, // ten years
+        httpOnly: false,
+        // sameSite: "none",
+        sameSite: "lax",
+        // secure: false, // cookie only word in https
+        // secure: true,   // cookie only word in https
+      },
+      resave: false, // required: force lightweight session keep alive (touch)
+      saveUninitialized: false, // recommended: only save session when data exists
+      secret: "ill5bdf8jjq6t562hher;;f8",
+    })
+  );
+
   // app.get('/', (_, res) => {
   //   res.send('Hello!');
   // })
@@ -30,10 +89,13 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: () => ({ em: orm.em.fork() }),
+    context: ({ req, res }): MyContext => ({ em: orm.em.fork(), req, res }),
   });
   await apolloServer.start();
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({
+    app,
+    cors: false,
+  });
   app.listen(4000, () => {
     console.log("server started on localhost:4000");
   });
@@ -41,5 +103,5 @@ const main = async () => {
 
 console.log("hello world hahaha ");
 main().catch((err) => {
-  console.error(err); 
+  console.error(err);
 });
