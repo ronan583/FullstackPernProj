@@ -71,7 +71,8 @@ const main = async () => {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 5, // ten years
         httpOnly: false,
         // sameSite: "none",
-        sameSite: "lax",
+        // sameSite: "strict",
+        // sameSite: "lax",
         // secure: false, // cookie only word in https
         // secure: true,   // cookie only word in https
       },

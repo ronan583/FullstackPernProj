@@ -5,6 +5,7 @@ import {
   Ctx,
   Field,
   InputType,
+  Query,
   Mutation,
   Resolver,
   ObjectType,
@@ -67,14 +68,12 @@ export class UserResolver {
     //   password: hashedPassword,
     // });
     try {
-
       await em.persistAndFlush(user);
-    } catch(err) {
-      if(err.code === '23505' || err.detail.includes('already exists')){
+    } catch (err) {
+      if (err.code === "23505" || err.detail.includes("already exists")) {
         //duplicated username error
-        return {errors: [{field: "username", message: "already taken"}]}
+        return { errors: [{ field: "username", message: "already taken" }] };
       }
-      
     }
     return { user };
   }
@@ -98,10 +97,20 @@ export class UserResolver {
       };
     }
     console.log(`user${user.id} logged in`);
-    
+
     req.session.userId = user.id;
     console.log(req.session);
 
     return { user };
+  }
+
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() {  req, em }: MyContext) {
+    if(!req.session.userId) {
+      console.log('you are not logged in');      
+      return null;
+    }
+    const user = await em.findOne(User, {id: req.session.userId});
+    return user;
   }
 }
