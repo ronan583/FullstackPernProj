@@ -13,11 +13,13 @@ import session from "express-session";
 import Redis from "ioredis";
 import { MyContext } from "./types";
 import cors from "cors";
+import { User } from "./entities/User";
 
 // add property, augment express-session module
 declare module "express-session" {
   interface SessionData {
     userId: number;
+    user: User;
   }
 }
 
