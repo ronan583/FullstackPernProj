@@ -5,7 +5,8 @@ import { AppProps } from "next/app";
 import { Provider, cacheExchange, fetchExchange, createClient } from "urql";
 
 const client = createClient({
-  url: "http://localhost:4000/graphql",
+  // url: "http://localhost:4000/graphql",
+  url: "http://10.24.8.49:4000/graphql",
   exchanges: [cacheExchange, fetchExchange],
   fetchOptions: {
     credentials: "include"

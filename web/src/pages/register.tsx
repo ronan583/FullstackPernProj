@@ -10,33 +10,23 @@ import {
 } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
-import { useMutation } from "urql";
+import { useRegisterMutation } from "../gql/generated";
 
-const REGISTER_MUTATION = `mutation Register($username:String!, $password:String!) {
-  login(options: {username: $username, password: $password}) {
-    errors {
-      message
-      field
-    }
-    user {
-      createdAt
-      id
-      updatedAt
-      username
-    }
-  }
-}`;
 interface registerProps {}
 
 const Register: React.FC<registerProps> = ({}) => {
-  const [, register] = useMutation(REGISTER_MUTATION);
+  // const [, register] = useMutation(REGISTER_MUTATION);
+  const [, register] = useRegisterMutation();
   return (
     <Wrapper variant="small">
       <Formik
         initialValues={{ username: "", password: "" }}
-        onSubmit={async (values) => {
-          const {data} = await register(values)
-          console.log(data);
+        onSubmit={async (values, { setErrors }) => {
+          const response = await register(values);
+          if (response.data?.register.errors) {
+            [{ field: "username", message: "something wrong" }];
+            setErrors({ username: "username error!" });
+          }
         }}
       >
         {({ isSubmitting }) => (
