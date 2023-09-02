@@ -1,5 +1,5 @@
 import React, { InputHTMLAttributes } from "react";
-import { FieldHookConfig, useField } from "formik";
+import { useField } from "formik";
 import {
   FormControl,
   FormErrorMessage,
