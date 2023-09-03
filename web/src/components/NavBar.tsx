@@ -25,7 +25,8 @@ export const Navbar: React.FC<NavBarProps> = ({}) => {
     // user is logged in
     body = (
       <Box>
-        <Box>{data.me.username}</Box>;<Button variant="link">Log out</Button>
+        <Box>{data.me.username}</Box>
+        <Button variant="link">Log out</Button>
       </Box>
     );
   }
