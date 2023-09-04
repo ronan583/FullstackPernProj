@@ -103,7 +103,7 @@ export class UserResolver {
 
     req.session.userId = user.id;
     // req.session.user = user;
-    console.log(req.session);
+    console.log(req);
 
     return { user };
   }

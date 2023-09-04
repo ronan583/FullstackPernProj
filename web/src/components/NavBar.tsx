@@ -6,7 +6,6 @@ interface NavBarProps {}
 export const Navbar: React.FC<NavBarProps> = ({}) => {
   const [{ data, fetching }] = useMeQuery();
   let body = null;
-  console.log(data);
   if (fetching) {
     // data loading
   } else if (!data?.me) {
@@ -31,7 +30,7 @@ export const Navbar: React.FC<NavBarProps> = ({}) => {
     );
   }
   return (
-    <Flex bg="tomato" p={4}>
+    <Flex bg="tan" p={4}>
       <Box ml={"auto"}>{body}</Box>
     </Flex>
   );
