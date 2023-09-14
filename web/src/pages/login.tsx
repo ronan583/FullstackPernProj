@@ -1,11 +1,14 @@
 import React from "react";
 import { Form, Formik } from "formik";
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Flex, Link } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
 import { useLoginMutation } from "../gql/generated";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/router";
+import { createUrqlClient } from "../utils/createUrqlClient";
+import { withUrqlClient } from "next-urql";
+import NextLink from "next/link";
 
 interface loginProps {}
 
@@ -16,9 +19,9 @@ const Login: React.FC<loginProps> = ({}) => {
     <Wrapper variant="small">
       <Formik
         // initialValues={{ username: "", password: "" }}
-        initialValues={{ username: "", password: "" }}
-        onSubmit={async (values, {setErrors}) => {
-          const response = await login({options: values});
+        initialValues={{ usernameOrEmail: "", password: "" }}
+        onSubmit={async (values, { setErrors }) => {
+          const response = await login(values);
           if (response.data?.login.errors) {
             setErrors(toErrorMap(response.data.login.errors));
           } else {
@@ -29,9 +32,9 @@ const Login: React.FC<loginProps> = ({}) => {
         {({ isSubmitting }) => (
           <Form>
             <InputField
-              name="username"
-              placeholder="username"
-              label="Username"
+              name="usernameOrEmail"
+              placeholder="Username Or Email"
+              label="Username Or Email"
             />
             <Box mt={4}>
               <InputField
@@ -41,9 +44,14 @@ const Login: React.FC<loginProps> = ({}) => {
                 type="password"
               />
             </Box>
+            <Flex>
+              <NextLink href={"/forgot-password"} style={{ marginLeft: "auto" }}>
+                forgot password
+              </NextLink>
+            </Flex>
             <Box mt={4}>
               <Button type="submit" colorScheme="teal" isLoading={isSubmitting}>
-                Register
+                Login
               </Button>
             </Box>
           </Form>
@@ -53,4 +61,4 @@ const Login: React.FC<loginProps> = ({}) => {
   );
 };
 
-export default Login;
+export default withUrqlClient(createUrqlClient)(Login);

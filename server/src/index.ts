@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { MikroORM } from "@mikro-orm/core";
-import { __prod__ } from "./constants";
+import { COOKIE_NAME, __prod__ } from "./constants";
 import mikroConfig from "./mikro-orm.config";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
@@ -14,6 +14,7 @@ import Redis from "ioredis";
 import { MyContext } from "./types";
 import cors from "cors";
 import { User } from "./entities/User";
+import { sendEmail } from "./utils/sendEmail";
 
 // add property, augment express-session module
 declare module "express-session" {
@@ -40,21 +41,14 @@ const main = async () => {
   // let redisClient = redis.createClient();
   app.use(
     cors({
-      origin: [
-        "https://studio.apollographql.com",
-        "http://localhost:4000/graphql",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-        "http://localhost:3000",
-        "http://10.24.37.18:3000",
-      ],
+      origin: ["https://studio.apollographql.com", "http://localhost:3000"],
       // origin: '*',
       // origin: 'http://localhost:4000/graphql',
       credentials: true,
     })
   );
   // const redisclient = Redis.createClient();
-  const redisclient = new Redis();
+  const redisClient = new Redis();
   // redisClient.connect().catch(console.error);
 
   const RedisStore = connectRedis(session);
@@ -62,14 +56,14 @@ const main = async () => {
 
   // Initialize store.
   let redisStore = new RedisStore({
-    client: redisclient as any,
+    client: redisClient as any,
     disableTouch: true,
     disableTTL: true,
   });
   // Initialize sesssion storage.
   app.use(
     session({
-      name: "qid",
+      name: COOKIE_NAME,
       store: redisStore,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 5, // ten years
@@ -81,7 +75,7 @@ const main = async () => {
         // secure: true,   // cookie only word in https
       },
       resave: false, // required: force lightweight session keep alive (touch)
-      saveUninitialized: false, // recommended: only save session when data exists
+      saveUninitialized: true, // recommended: only save session when data exists
       secret: "ill5bdf8jjq6t562hher;;f8",
     })
   );
@@ -94,7 +88,12 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ em: orm.em.fork(), req, res }),
+    context: ({ req, res }): MyContext => ({
+      em: orm.em.fork(),
+      req,
+      res,
+      redis: redisClient,
+    }),
   });
   await apolloServer.start();
   apolloServer.applyMiddleware({

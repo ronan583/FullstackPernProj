@@ -1,23 +1,5 @@
-# mutation Login($username:String!, $password:String!) {
-#   register(options: {username: $username, password: $password}) {
-#     errors {
-#       message
-#       field
-#     }
-#     user {
-#       id
-#       username
-#     }
-#   }
-# }
-mutation Login($options: UsernamePasswordInput!) {
-  login(options: $options) {
-    errors {
-      message
-      field
-    }
-    user {
-      ...RegularUser
-    }
+mutation Login($usernameOrEmail: String!, $password: String!) {
+  login(usernameOrEmail: $usernameOrEmail, password: $password) {
+    ...RegularUserResponse
   }
 }
