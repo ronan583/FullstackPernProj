@@ -14,7 +14,7 @@ import Redis from "ioredis";
 import { MyContext } from "./types";
 import cors from "cors";
 import { User } from "./entities/User";
-import { sendEmail } from "./utils/sendEmail";
+import { createConnection } from "typeorm";
 
 // add property, augment express-session module
 declare module "express-session" {
@@ -25,6 +25,15 @@ declare module "express-session" {
 }
 
 const main = async () => {
+  const conn = await createConnection({
+    type: "postgres",
+    database: "pernstack",
+    username: "postgres",
+    password: "ronan20230623",
+    logging: true,
+    synchronize: true,
+    entities: [],
+  });
   const orm = await MikroORM.init(mikroConfig);
   await orm.getMigrator().up();
 
