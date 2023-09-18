@@ -40,14 +40,6 @@ const main = async () => {
   const repo = getRepository(Post)
   await repo.clear()
 
-  // const obj = { title: "my first post" } as { createdAt: string | Date; updatedAt: string | Date; title: string; };
-  // const em = orm.em.fork();
-
-  // const post = em.create(Post, obj);
-  // await em.persistAndFlush(post);
-  // const posts = await em.find(Post, {});
-  // console.log(posts);
-
   const app = express();
   // Initialize client.
   // let redisClient = redis.createClient();
@@ -59,13 +51,8 @@ const main = async () => {
       credentials: true,
     })
   );
-  // const redisclient = Redis.createClient();
   const redisClient = new Redis();
-  // redisClient.connect().catch(console.error);
-
   const RedisStore = connectRedis(session);
-  // const RedisStore = connectRedis.default;
-
   // Initialize store.
   let redisStore = new RedisStore({
     client: redisClient as any,
@@ -92,9 +79,6 @@ const main = async () => {
     })
   );
 
-  // app.get('/', (_, res) => {
-  //   res.send('Hello!');
-  // })
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [HelloResolver, PostResolver, UserResolver],
