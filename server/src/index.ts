@@ -1,7 +1,5 @@
 import "reflect-metadata";
-import { MikroORM } from "@mikro-orm/core";
 import { COOKIE_NAME, __prod__ } from "./constants";
-import mikroConfig from "./mikro-orm.config";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -14,7 +12,8 @@ import Redis from "ioredis";
 import { MyContext } from "./types";
 import cors from "cors";
 import { User } from "./entities/User";
-import { createConnection } from "typeorm";
+import { createConnection, getRepository } from "typeorm";
+import { Post } from "./entities/Post";
 
 // add property, augment express-session module
 declare module "express-session" {
@@ -23,19 +22,23 @@ declare module "express-session" {
     user: User;
   }
 }
-
+// dbName: "pernrl",
+// type: "postgresql",
+// user: "postgres",
+// password: "ronan583",
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
-    database: "pernstack",
+    database: "pernproj",
     username: "postgres",
-    password: "ronan20230623",
+    password: "ronan583",
     logging: true,
     synchronize: true,
-    entities: [],
+    entities: [Post, User],
   });
-  const orm = await MikroORM.init(mikroConfig);
-  await orm.getMigrator().up();
+
+  const repo = getRepository(Post)
+  await repo.clear()
 
   // const obj = { title: "my first post" } as { createdAt: string | Date; updatedAt: string | Date; title: string; };
   // const em = orm.em.fork();
@@ -98,7 +101,6 @@ const main = async () => {
       validate: false,
     }),
     context: ({ req, res }): MyContext => ({
-      em: orm.em.fork(),
       req,
       res,
       redis: redisClient,
