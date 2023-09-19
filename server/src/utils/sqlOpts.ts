@@ -1,7 +1,14 @@
-import { Post } from "src/entities/Post";
+import { Post } from "../entities/Post";
+import { User } from "../entities/User";
 
-const delPosts = async () => {
+const deleteAllPosts = async () => {
   await Post.delete({});
 };
 
-export { delPosts };
+const deleteAllUsers = async () => {
+  await User.delete({});
+};
+
+const sqlOpts = { deleteAllUsers, deleteAllPosts };
+
+export default sqlOpts;

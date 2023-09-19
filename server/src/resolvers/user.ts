@@ -172,7 +172,9 @@ export class UserResolver {
       console.log("you are not logged in");
       return null;
     }
-    return User.findOne(req.session.userId as any);
+    console.log(req.session);
+
+    return User.findOne({ where: { id: req.session.userId } });
   }
 
   @Mutation(() => Boolean)

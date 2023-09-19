@@ -14,6 +14,7 @@ import cors from "cors";
 import { User } from "./entities/User";
 import { createConnection, getRepository } from "typeorm";
 import { Post } from "./entities/Post";
+import sqlOpts from "./utils/sqlOpts";
 
 // add property, augment express-session module
 declare module "express-session" {
@@ -37,8 +38,8 @@ const main = async () => {
     entities: [Post, User],
   });
 
-  const repo = getRepository(Post)
-  await repo.clear()
+  // await sqlOpts.deleteAllPosts();
+  // await sqlOpts.deleteAllUsers();
 
   const app = express();
   // Initialize client.
