@@ -14,7 +14,7 @@ import cors from "cors";
 import { User } from "./entities/User";
 import { createConnection, getRepository } from "typeorm";
 import { Post } from "./entities/Post";
-import sqlOpts from "./utils/sqlOpts";
+import path = require("path");
 
 // add property, augment express-session module
 declare module "express-session" {
@@ -35,9 +35,11 @@ const main = async () => {
     password: "ronan583",
     logging: true,
     synchronize: true,
+    migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User],
   });
-
+  // 
+  await conn.runMigrations();
   // await sqlOpts.deleteAllPosts();
   // await sqlOpts.deleteAllUsers();
 
