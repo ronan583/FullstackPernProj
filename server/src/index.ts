@@ -38,8 +38,9 @@ const main = async () => {
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User],
   });
-  // 
+  //
   await conn.runMigrations();
+  // await Post.delete({});
   // await sqlOpts.deleteAllPosts();
   // await sqlOpts.deleteAllUsers();
 

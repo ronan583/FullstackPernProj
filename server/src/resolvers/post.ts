@@ -4,11 +4,13 @@ import {
   Arg,
   Ctx,
   Field,
+  FieldResolver,
   InputType,
   Int,
   Mutation,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { isAuth } from "../middleware/isAuth";
@@ -22,8 +24,12 @@ class PostInput {
   text: string;
 }
 
-@Resolver()
+@Resolver(Post)
 export class PostResolver {
+  @FieldResolver(() => String)
+  textSnippet(@Root() root: Post) {
+    return root.text.slice(0, 50);
+  }
   @Query(() => [Post])
   async posts(
     @Arg("limit", () => Int) limit: number,
@@ -34,10 +40,11 @@ export class PostResolver {
       .getRepository(Post)
       .createQueryBuilder("p")
       // .where("user.id = :id", { id: 1 })
-      .orderBy('"createdAt"', "DESC")
+      // .orderBy('"createdAt"', "DESC")
+      .orderBy('"createdAt"')
       .take(realLimit);
     if (cursor) {
-      qb.where('"createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) });
+      qb.where('"createdAt" > :cursor', { cursor: new Date(parseInt(cursor)) });
     }
     return qb.getMany();
   }
