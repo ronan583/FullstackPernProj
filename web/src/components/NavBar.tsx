@@ -1,11 +1,15 @@
-import { Box, Button, Flex, Link } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Link } from "@chakra-ui/react";
 import React from "react";
 import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../gql/generated";
+import { isServer } from "../utils/isServer";
+import styles from "./index.module.css"
 interface NavBarProps {}
 export const Navbar: React.FC<NavBarProps> = ({}) => {
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
-  const [{ data, fetching }] = useMeQuery();
+  const [{ data, fetching }] = useMeQuery({
+    // pause: isServer(),
+  });
   let body = null;
   if (fetching) {
     // data loading
@@ -30,8 +34,13 @@ export const Navbar: React.FC<NavBarProps> = ({}) => {
   } else {
     // user is logged in
     body = (
-      <Box>
-        <Box>{data.me.username}</Box>
+      <Flex align={"center"}>
+        <Flex mr={4}>
+          <Link href={"/create-post"} style={{ marginLeft: "auto" }}>
+            <Button>Create Post</Button>
+          </Link>
+        </Flex>
+        <Box mr={4}>{data.me.username}</Box>
         <Button
           onClick={() => {
             logout({});
@@ -41,12 +50,19 @@ export const Navbar: React.FC<NavBarProps> = ({}) => {
         >
           Log out
         </Button>
-      </Box>
+      </Flex>
     );
   }
   return (
-    <Flex zIndex={1} position='sticky' top={0} bg="tan" p={4}>
-      <Box ml={"auto"}>{body}</Box>
+    <Flex zIndex={1} position="sticky" top={0} bg="tan" p={4}>
+      <Flex flex={1} m="auto" align="center" maxWidth={800}>
+        <Heading>
+          <NextLink href={"/"}>
+            <Box>HOME</Box>
+          </NextLink>
+        </Heading>
+        <Box ml={"auto"}>{body}</Box>
+      </Flex>
     </Flex>
   );
 };

@@ -15,6 +15,7 @@ import { User } from "./entities/User";
 import { createConnection, getRepository } from "typeorm";
 import { Post } from "./entities/Post";
 import path = require("path");
+import { Updoot } from "./entities/Updoot";
 
 // add property, augment express-session module
 declare module "express-session" {
@@ -36,10 +37,10 @@ const main = async () => {
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User],
+    entities: [Post, User, Updoot],
   });
   //
-  await conn.runMigrations();
+  // await conn.runMigrations();
   // await Post.delete({});
   // await sqlOpts.deleteAllPosts();
   // await sqlOpts.deleteAllUsers();

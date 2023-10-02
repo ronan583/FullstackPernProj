@@ -69,5 +69,5 @@ const Login: React.FC<loginProps> = ({}) => {
     </Wrapper>
   );
 };
+export default withUrqlClient(createUrqlClient, {ssr: false})(Login);
 
-export default withUrqlClient(createUrqlClient)(Login);
