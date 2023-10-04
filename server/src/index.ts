@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "dotenv-safe/config";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
@@ -12,7 +13,7 @@ import Redis from "ioredis";
 import { MyContext } from "./types";
 import cors from "cors";
 import { User } from "./entities/User";
-import { createConnection, getRepository } from "typeorm";
+import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
 import path = require("path");
 import { Updoot } from "./entities/Updoot";
@@ -24,39 +25,37 @@ declare module "express-session" {
     user: User;
   }
 }
-// dbName: "pernrl",
-// type: "postgresql",
-// user: "postgres",
-// password: "ronan583",
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
-    database: "pernproj",
-    username: "postgres",
-    password: "ronan583",
+    // database: "pernproj",
+    // username: "postgres",
+    // password: "ronan583",
+    // don't need all above, when using .env
+    url: process.env.DATABASE_URL,
     logging: true,
-    synchronize: true,
+    // synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User, Updoot],
   });
   //
-  // await conn.runMigrations();
+  await conn.runMigrations();
   // await Post.delete({});
   // await sqlOpts.deleteAllPosts();
   // await sqlOpts.deleteAllUsers();
 
   const app = express();
   // Initialize client.
-  // let redisClient = redis.createClient();
+  app.set("proxy", 1);
   app.use(
     cors({
-      origin: ["https://studio.apollographql.com", "http://localhost:3000"],
+      origin: process.env.CORS_ORIGIN,
       // origin: '*',
       // origin: 'http://localhost:4000/graphql',
       credentials: true,
     })
   );
-  const redisClient = new Redis();
+  const redisClient = new Redis(process.env.REDIS_URL);
   const RedisStore = connectRedis(session);
   // Initialize store.
   let redisStore = new RedisStore({
@@ -77,10 +76,12 @@ const main = async () => {
         // sameSite: "lax",
         // secure: false, // cookie only word in https
         // secure: true,   // cookie only word in https
+        // secure: __prod__,
+        domain: __prod__ ? ".littlemiaooow" : undefined,
       },
       resave: false, // required: force lightweight session keep alive (touch)
       saveUninitialized: true, // recommended: only save session when data exists
-      secret: "ill5bdf8jjq6t562hher;;f8",
+      secret: process.env.SESSION_SECRET,
     })
   );
 
@@ -100,8 +101,8 @@ const main = async () => {
     app,
     cors: false,
   });
-  app.listen(4000, () => {
-    console.log("server started on localhost:4000");
+  app.listen(parseInt(process.env.PORT), () => {
+    console.log(`server started on localhost:${process.env.PORT}`);
   });
 };
 

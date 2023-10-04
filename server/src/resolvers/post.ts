@@ -5,7 +5,6 @@ import {
   Ctx,
   Field,
   FieldResolver,
-  Info,
   InputType,
   Int,
   Mutation,
@@ -44,7 +43,7 @@ export class PostResolver {
 
   // voting
   @Mutation(() => Boolean)
-  // @UseMiddleware(isAuth)
+  @UseMiddleware(isAuth)
   async vote(
     @Arg("postId", () => Int) postId: number,
     @Arg("value", () => Int) value: number,
@@ -159,7 +158,7 @@ export class PostResolver {
     // }
 
     // const posts = await qb.getMany();
-    // console.log("posts: ", posts.slice(0, 50));
+    console.log("posts: ", posts.slice(0, 50));
 
     return {
       posts: posts.slice(0, 50),
@@ -182,19 +181,24 @@ export class PostResolver {
   }
 
   @Mutation(() => Post, { nullable: true })
+  @UseMiddleware(isAuth)
   async updatePost(
-    @Arg("id") id: number,
-    @Arg("title", () => String, { nullable: true }) title: string
-  ) {
-    const post = await Post.findOne({ where: { id } });
-    if (!post) {
-      return null;
-    }
-    if (typeof title !== "undefined") {
-      post.title = title;
-      await Post.update({ id }, { title });
-    }
-    return post;
+    @Arg("id", () => Int) id: number,
+    @Arg("title") title: string,
+    @Arg("text") text: string,
+    @Ctx() { req }: MyContext
+  ): Promise<Post | null> {
+    const result = await getConnection()
+      .createQueryBuilder()
+      .update(Post)
+      .set({ title, text })
+      .where('id = :id and "creatorId" = :creatorId', {
+        id,
+        creatorId: req.session.userId,
+      })
+      .returning("*")
+      .execute();
+      return result.raw[0];
   }
 
   @Mutation(() => Boolean)
