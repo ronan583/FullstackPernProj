@@ -36,9 +36,9 @@ export const Navbar: React.FC<NavBarProps> = ({}) => {
     body = (
       <Flex align={"center"}>
         <Flex mr={4}>
-          <Link href={"/create-post"} style={{ marginLeft: "auto" }}>
+          <NextLink href={"/create-post"} style={{ marginLeft: "auto" }}>
             <Button>Create Post</Button>
-          </Link>
+          </NextLink>
         </Flex>
         <Box mr={4}>{data.me.username}</Box>
         <Button

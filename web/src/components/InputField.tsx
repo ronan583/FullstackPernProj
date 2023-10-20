@@ -6,7 +6,6 @@ import {
   FormLabel,
   Input,
   Textarea,
-  TextareaProps,
 } from "@chakra-ui/react";
 
 type BaseInputFieldProps = {

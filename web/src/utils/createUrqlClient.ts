@@ -46,6 +46,7 @@ function invalidateAllPosts(cache: Cache) {
 
 export const cursorPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
+    // console.log("cache: ", cache);
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
     const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
@@ -59,7 +60,9 @@ export const cursorPagination = (): Resolver => {
       cache.resolveFieldByKey(entityKey, fieldKey) as string,
       "posts"
     );
+    // console.log("info: ", info);
     // console.log("allFields: ", allFields);
+    // console.log("fieldInfos: ", fieldInfos);
     // console.log("entity key: ", entityKey);
     // console.log("fieldArgs: ", fieldArgs);
     // console.log("fieldKey: ", fieldKey);
@@ -77,6 +80,7 @@ export const cursorPagination = (): Resolver => {
       // console.log("data is: ", _hasMore, data);
       results.push(...data);
     });
+    // console.log("results: ", results);
 
     const obj = {
       __typename: "PaginatedPosts",
@@ -96,7 +100,7 @@ export const createUrqlClient = (
     cookie = ctx.req!.headers.cookie!;
   }
   return {
-    url: "http://localhost:4000/graphql",
+    url: process.env.NEXT_PUBLIC_API_URL as string,
     // url: "https://api.littlemiaooow.site:4000/graphql",
     fetchOptions: {
       credentials: "include" as const,

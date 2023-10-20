@@ -39,19 +39,17 @@ const main = async () => {
     entities: [Post, User, Updoot],
   });
   //
-  await conn.runMigrations();
+  // await conn.runMigrations();
   // await Post.delete({});
   // await sqlOpts.deleteAllPosts();
   // await sqlOpts.deleteAllUsers();
 
   const app = express();
   // Initialize client.
-  app.set("proxy", 1);
+  app.set("trust proxy", 1);
   app.use(
     cors({
       origin: process.env.CORS_ORIGIN,
-      // origin: '*',
-      // origin: 'http://localhost:4000/graphql',
       credentials: true,
     })
   );
@@ -70,14 +68,14 @@ const main = async () => {
       store: redisStore,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 5, // ten years
-        httpOnly: false,
+        httpOnly: true,
         // sameSite: "none",
         // sameSite: "strict",
-        // sameSite: "lax",
+        sameSite: "lax",
         // secure: false, // cookie only word in https
         // secure: true,   // cookie only word in https
-        // secure: __prod__,
-        domain: __prod__ ? ".littlemiaooow" : undefined,
+        secure: __prod__,
+        domain: __prod__ ? ".littlemiaooow.site" : undefined,
       },
       resave: false, // required: force lightweight session keep alive (touch)
       saveUninitialized: true, // recommended: only save session when data exists

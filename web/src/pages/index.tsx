@@ -4,7 +4,6 @@ import {
   useDeletePostMutation,
   useMeQuery,
   usePostsQuery,
-  useUpdatePostMutation,
 } from "../gql/generated";
 import { Layout } from "../components/Layout";
 import Link from "next/link";
@@ -13,7 +12,6 @@ import {
   Button,
   Flex,
   Heading,
-  Icon,
   Stack,
   Text,
 } from "@chakra-ui/react";

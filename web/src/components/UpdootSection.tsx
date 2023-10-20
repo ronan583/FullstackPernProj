@@ -3,7 +3,6 @@ import { Flex, IconButton } from "@chakra-ui/react";
 import React, { useState } from "react";
 import {
   PostSnippetFragment,
-  PostsQuery,
   useVoteMutation,
 } from "../gql/generated";
 
